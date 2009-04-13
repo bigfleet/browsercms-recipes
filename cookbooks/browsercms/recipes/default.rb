@@ -33,7 +33,7 @@ end
 
 execute "install-browsercms" do
   command "cd /home/#{user}/browsercms; rake cms:install"
-  #creates "/home/#{user}/browsercms"
+  creates "/usr/lib/ruby/gems/1.8/gems/browser_cms_blog_module-3.0.0"
   action :run  
 end
 
@@ -52,19 +52,29 @@ directory "/var/www/browsercms" do
   mode 0775  
 end
 
+directory "/var/www/browsercms/site" do
+  action :create
+  owner user
+  group "www-data"
+  mode 0775  
+end
+
 template "/var/www/browsercms/database.yml" do
   owner node[:user]
   mode 0644
   source "database.yml.erb"
   variables({
     :name => "browsercms",
-    :passwd => "dope"
+    :passwd => "J4LZE1XYTX30QYL"
   })
 end
 
 execute "setup-browsercms" do
-  command "cd /var/www/browsercms; rails site -d mysql -m /var/chef/cookbooks/browsercms/files/default/#{browsercms["style"]}_rails_template.rb"
-  creates "/var/www/browsercms/site"
+  command "umask 002 && rails site -d mysql -m /var/chef/cookbooks/browsercms/files/default/#{browsercms["style"]}_rails_template.rb"
+  creates "/var/www/browsercms/site/public/"
+  group   "www-data"
+  cwd     "/var/www/browsercms"
+  user    node[:user]
   action :run  
 end
 

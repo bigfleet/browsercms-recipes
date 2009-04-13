@@ -13,7 +13,7 @@ namespace :bootstrap do
   DESC
   task :prereqs, :roles => :app do
     sudo 'apt-get update'
-    sudo 'apt-get install -y git-core ruby ruby1.8-dev rubygems libopenssl-ruby1.8 libshadow-ruby1.8 build-essential wget'
+    sudo 'apt-get install -y git-core ruby ruby1.8-dev rubygems irb libopenssl-ruby1.8 libshadow-ruby1.8 build-essential wget'
   end
   
   task :replace_rubygems, :roles => :app do
