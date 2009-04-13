@@ -70,18 +70,18 @@ template "/var/www/browsercms/database.yml" do
 end
 
 execute "setup-browsercms" do
-  command "umask 002 && rails site -d mysql -m /var/chef/cookbooks/browsercms/files/default/#{browsercms["style"]}_rails_template.rb"
+  command "umask 002 && rails site -d mysql -m /var/chef/cookbooks/browsercms/files/default/#{browsercms["style"]}_rails_template.rb > results.txt"
   creates "/var/www/browsercms/site/public/"
   group   "www-data"
   cwd     "/var/www/browsercms"
-  user    node[:user]
+  user    "www-data"
   action :run  
 end
 
 passenger_app "public-site" do
   conf( {:env => "production", 
          :server_name => browsercms["server_name"],
-         :template => "admin.conf.erb",          
+         :template => "public.conf.erb",          
          :docroot => browsercms["docroot"],
          :enable => true
          } )

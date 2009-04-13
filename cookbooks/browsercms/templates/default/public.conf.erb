@@ -14,10 +14,16 @@
 	ErrorDocument 500 /500.html
 
 	RewriteEngine On
+	
+	# Uncomment for rewrite debugging
+  #RewriteLog /var/sites/mysite/log/rewrite.log
+  #RewriteLogLevel 9
+
+  #apache should serve cached pages
+  RewriteRule ^/$ /cache/index.html [QSA]
+  RewriteRule ^([^.]+)$ /cache/$1.html [QSA]
 
 	<Directory <%= @docroot %>>
-    Options FollowSymLinks
-    AllowOverride None
     Order allow,deny
     Allow from all
   </Directory>
