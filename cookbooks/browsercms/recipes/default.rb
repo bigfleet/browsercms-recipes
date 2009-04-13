@@ -95,3 +95,5 @@ passenger_app "admin-site" do
          :enable => true
          } )
 end
+
+# append config.action_controller.page_cache_directory = RAILS_ROOT + "/public/cache/" to config/environments/production.rb
