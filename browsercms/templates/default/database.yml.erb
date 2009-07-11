@@ -1,0 +1,13 @@
+defaults: &defaults
+  adapter: mysql
+  host: localhost
+  username: root
+  password: <%= @passwd %>
+
+production:
+  database: browsercms
+  <<: *defaults
+
+development:
+  database: browsercms
+  <<: *defaults
