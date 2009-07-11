@@ -2,7 +2,7 @@
 # Cookbook Name:: browsercms
 # Recipe:: default
 #
-# Copyright 2009, Kane Reid Securities Group, Inc.
+# Copyright 2009, Jim Van Fleet
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,83 +17,78 @@
 # limitations under the License.
 #
 
-include_recipe 'mysql'
-include_recipe 'apache2'
-include_recipe 'passenger'
-include_recipe 'gems'
+include_recipe "apache2::mod_rails"
+include_recipe "passenger"
 
-browsercms = node[:browsercms]
-user = node[:user]
+user = node[:railsapps][:browsercms][:user]
+repo = node[:railsapps][:browsercms][:repo]
+user_home = File.expand_path("~#{user}")
 
-execute "download-browsercms" do
-  command "cd /home/#{user}; git clone git://github.com/browsermedia/browsercms.git"
-  creates "/home/#{user}/browsercms"
-  action :run
+
+%w{browsercms}.each do |gem_dep|
+  gem_package gem_dep
 end
 
-execute "install-browsercms" do
-  command "cd /home/#{user}/browsercms; rake cms:install"
-  creates "/usr/lib/ruby/gems/1.8/gems/browser_cms_blog_module-3.0.0"
-  action :run  
+r = gem_package "chef-deploy" do
+  source "http://gems.engineyard.com"
+  action :nothing
 end
 
+r.run_action(:install)
 
-directory "/var/log/browsercms" do
-  action :create
-  owner "root"
-  group "admin"
-  mode 0775
+Gem.clear_paths
+require "chef-deploy"
+current_path = node[:railsapps][:browsercms][:app][:path] + "/current"
+
+["#{node[:railsapps][:browsercms][:app][:log_dir]}",
+ "#{node[:railsapps][:browsercms][:app][:path]}",
+ "#{node[:railsapps][:browsercms][:app][:path]}/shared",
+ "#{node[:railsapps][:browsercms][:app][:path]}/shared/config"].each do |dir_name|
+   directory dir_name do
+     owner user
+     group node[:railsapps][:browsercms][:app][:group]
+     mode 0775
+   end
 end
 
-directory "/var/www/browsercms" do
-  action :create
-  owner user
-  group "www-data"
-  mode 0775  
-end
-
-directory "/var/www/browsercms/site" do
-  action :create
-  owner user
-  group "www-data"
-  mode 0775  
-end
-
-template "/var/www/browsercms/database.yml" do
-  owner node[:user]
-  mode 0644
+template "#{node[:railsapps][:browsercms][:app][:path]}/shared/config/database.yml" do
   source "database.yml.erb"
-  variables({
-    :name => "browsercms",
-    :passwd => "J4LZE1XYTX30QYL"
-  })
+  owner    user
+  group    node[:railsapps][:browsercms][:app][:group]
+  variables :name => node[:railsapps][:browsercms][:db][:database], 
+            :passwd => node[:railsapps][:browsercms][:db][:password]
+  mode "0664"
 end
 
 execute "setup-browsercms" do
-  command "umask 002 && rails site -d mysql -m /var/chef/cookbooks/browsercms/files/default/#{browsercms["style"]}_rails_template.rb > results.txt"
-  creates "/var/www/browsercms/site/public/"
-  group   "www-data"
-  cwd     "/var/www/browsercms"
-  user    "www-data"
-  action :run  
+  command "rails #{node[:railsapps][:browsercms][:app][:sitename]} -d mysql -m http://browsercms.org/templates/#{node[:railsapps][:browsercms][:app][:style]}.rb"
+  creates "#{node[:railsapps][:browsercms][:app][:path]}/#{node[:railsapps][:browsercms][:app][:sitename]}/public/"
+  group   "#{node[:railsapps][:browsercms][:app][:group]}"
+  cwd     "#{node[:railsapps][:browsercms][:app][:path]}"
+  user    "#{node[:railsapps][:browsercms][:app][:user]}"
+  action :run
+  umask   002
 end
 
-passenger_app "public-site" do
-  conf( {:env => "production", 
-         :server_name => browsercms["server_name"],
-         :template => "public.conf.erb",          
-         :docroot => browsercms["docroot"],
-         :enable => true
-         } )
+web_app "public-site" do
+  docroot "#{current_path}/public"
+  server_name node[:railsapps][:browsercms][:host]
+  log_dir node[:railsapps][:browsercms][:app][:log_dir]
+  max_pool_size node[:railsapps][:browsercms][:app][:pool_size]
+  rails_env "production"
+  template "public.conf.erb"
 end
 
-passenger_app "admin-site" do
-  conf( {:env => "production", 
-         :server_name => browsercms["server_name"],
-         :template => "admin.conf.erb",
-         :docroot => browsercms["docroot"],
-         :enable => true
-         } )
+web_app "admin-site" do
+  docroot "#{current_path}/public"
+  server_name node[:railsapps][:browsercms][:host]
+  log_dir node[:railsapps][:browsercms][:app][:log_dir]
+  rails_env "production"
+  template "admin.conf.erb"
+end
+
+apache_site "default" do
+  enable false
 end
 
 # append config.action_controller.page_cache_directory = RAILS_ROOT + "/public/cache/" to config/environments/production.rb
