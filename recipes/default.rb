@@ -21,7 +21,7 @@ include_recipe "passenger_apache2::mod_rails"
 
 application_user = node[:railsapps][:browsercms][:user]
 
-%w{browsercms}.each do |gem_dep|
+%w{browsercms mysql}.each do |gem_dep|
   gem_package gem_dep
 end
 
