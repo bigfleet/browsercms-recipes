@@ -25,15 +25,6 @@ application_user = node[:railsapps][:browsercms][:user]
   gem_package gem_dep
 end
 
-r = gem_package "chef-deploy" do
-  source "http://gems.engineyard.com"
-  action :nothing
-end
-
-r.run_action(:install)
-
-Gem.clear_paths
-require "chef-deploy"
 current_path = node[:railsapps][:browsercms][:app][:path] + "/current"
 
 ["#{node[:railsapps][:browsercms][:app][:log_dir]}",
