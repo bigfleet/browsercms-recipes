@@ -25,8 +25,6 @@ application_user = node[:railsapps][:browsercms][:user]
   gem_package gem_dep
 end
 
-current_path = node[:railsapps][:browsercms][:app][:path] + "/current"
-
 ["#{node[:railsapps][:browsercms][:app][:log_dir]}",
  "#{node[:railsapps][:browsercms][:app][:path]}",
  "#{node[:railsapps][:browsercms][:app][:path]}/shared",
