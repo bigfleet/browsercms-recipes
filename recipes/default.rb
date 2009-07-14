@@ -45,9 +45,11 @@ template "#{node[:railsapps][:browsercms][:app][:path]}/shared/config/database.y
   mode "0664"
 end
 
+current_path = "#{node[:railsapps][:browsercms][:app][:path]}/#{node[:railsapps][:browsercms][:app][:sitename]}/public/"
+
 execute "setup-browsercms" do
   command "rails #{node[:railsapps][:browsercms][:app][:sitename]} -d mysql -m http://browsercms.org/templates/#{node[:railsapps][:browsercms][:app][:style]}.rb"
-  creates "#{node[:railsapps][:browsercms][:app][:path]}/#{node[:railsapps][:browsercms][:app][:sitename]}/public/"
+  creates current_path
   group   "#{node[:railsapps][:browsercms][:app][:group]}"
   cwd     "#{node[:railsapps][:browsercms][:app][:path]}"
   user    application_user
@@ -56,7 +58,7 @@ execute "setup-browsercms" do
 end
 
 web_app "public-site" do
-  docroot "#{current_path}/public"
+  docroot current_path
   server_name node[:railsapps][:browsercms][:host]
   log_dir node[:railsapps][:browsercms][:app][:log_dir]
   max_pool_size node[:railsapps][:browsercms][:app][:pool_size]
@@ -65,9 +67,10 @@ web_app "public-site" do
 end
 
 web_app "admin-site" do
-  docroot "#{current_path}/public"
+  docroot current_path
   server_name node[:railsapps][:browsercms][:host]
   log_dir node[:railsapps][:browsercms][:app][:log_dir]
+  max_pool_size node[:railsapps][:browsercms][:app][:pool_size]  
   rails_env "production"
   template "admin.conf.erb"
 end
