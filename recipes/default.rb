@@ -18,6 +18,7 @@
 #
 
 include_recipe "passenger_apache2::mod_rails"
+include_recipe "mysql::client"
 
 application_user = node[:railsapps][:browsercms][:user]
 
