@@ -19,10 +19,7 @@
 
 include_recipe "passenger_apache2::mod_rails"
 
-user = node[:railsapps][:browsercms][:user]
-repo = node[:railsapps][:browsercms][:repo]
-user_home = File.expand_path("~#{user}")
-
+application_user = node[:railsapps][:browsercms][:user]
 
 %w{browsercms}.each do |gem_dep|
   gem_package gem_dep
@@ -44,7 +41,7 @@ current_path = node[:railsapps][:browsercms][:app][:path] + "/current"
  "#{node[:railsapps][:browsercms][:app][:path]}/shared",
  "#{node[:railsapps][:browsercms][:app][:path]}/shared/config"].each do |dir_name|
    directory dir_name do
-     owner user
+     owner application_user
      group node[:railsapps][:browsercms][:app][:group]
      mode 0775
    end
@@ -52,7 +49,7 @@ end
 
 template "#{node[:railsapps][:browsercms][:app][:path]}/shared/config/database.yml" do
   source "database.yml.erb"
-  owner    user
+  owner    application_user
   group    node[:railsapps][:browsercms][:app][:group]
   variables :name => node[:railsapps][:browsercms][:db][:database], 
             :passwd => node[:railsapps][:browsercms][:db][:password]
@@ -64,7 +61,7 @@ execute "setup-browsercms" do
   creates "#{node[:railsapps][:browsercms][:app][:path]}/#{node[:railsapps][:browsercms][:app][:sitename]}/public/"
   group   "#{node[:railsapps][:browsercms][:app][:group]}"
   cwd     "#{node[:railsapps][:browsercms][:app][:path]}"
-  user    "#{node[:railsapps][:browsercms][:app][:user]}"
+  user    application_user
   action :run
   umask   002
 end
