@@ -38,7 +38,7 @@ end
 # Setting a database host in the style of bigfleet/kitchen
 database_nodes = search(:node, "railsapps_database:*")
 hash = database_nodes.select{ |rslt| rslt[:railsapps][:database] }.first 
-Chef::Log.info "Inspecting #{hash.inspect} for database host information" if hash 
+Chef::Log.info "Inspecting #{hash[:railsapps].inspect} for database host information" if hash 
 db_host = hash[:railsapps][:database]
 
 template "#{node[:railsapps][:browsercms][:app][:path]}/config/database.yml" do
