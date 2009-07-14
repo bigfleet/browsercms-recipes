@@ -35,13 +35,19 @@ end
    end
 end
 
+# Setting a database host in the style of bigfleet/kitchen
+database_nodes = search(:node, "railsapps_database:*")
+hash = database_nodes.select{ |rslt| rslt[:railsapps][:database] }.first 
+db_host = hash[:railsapps][:database]
+
 template "#{node[:railsapps][:browsercms][:app][:path]}/config/database.yml" do
   source "database.yml.erb"
   owner    application_user
   group    node[:railsapps][:browsercms][:app][:group]
   variables :database => node[:railsapps][:browsercms][:db][:database], 
             :passwd => node[:railsapps][:browsercms][:db][:password],
-            :user   => node[:railsapps][:browsercms][:db][:user]
+            :user   => node[:railsapps][:browsercms][:db][:user],
+            :host   => db_host || "localhost"
   mode "0664"
 end
 
