@@ -12,6 +12,7 @@ railsapps[:browsercms][:db][:database]   = "browsercms_production" unless railsa
 railsapps[:browsercms][:app]             = Mash.new        unless railsapps[:browsercms].has_key?(:app)
 railsapps[:browsercms][:app][:user]      = "www-data" unless railsapps[:browsercms][:app].has_key?(:user)
 railsapps[:browsercms][:app][:group]     = "www-data" unless railsapps[:browsercms][:app].has_key?(:group)
+railsapps[:browsercms][:app][:path]      = "/srv/browsercms" unless railsapps[:browsercms][:app].has_key?(:path)
 railsapps[:browsercms][:app][:log_dir]   = "/var/log/browsercms" unless railsapps[:browsercms][:app].has_key?(:log_dir)
 railsapps[:browsercms][:app][:style]     = "demo" unless railsapps[:browsercms][:app].has_key?(:style)
 railsapps[:browsercms][:app][:sitename]  = "site" unless railsapps[:browsercms][:app].has_key?(:sitename)
