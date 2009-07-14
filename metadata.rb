@@ -1,6 +1,6 @@
 name    "broswercms"
 description 'Run a browsercms instance on this node'
-depends "apache::mod_rails"
+depends "apache2::mod_rails"
 depends "apt"
 depends "gems"
 depends "git"
