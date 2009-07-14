@@ -1,0 +1,30 @@
+<VirtualHost *:80>
+	ServerName <%= @server_name %>
+  DocumentRoot <%= @docroot %>
+	RailsAllowModRewrite on
+  RailsBaseURI /
+  RailsMaxPoolSize <%= @max_pool_size %>
+  RailsPoolIdleTime 3600
+  RailsEnv 'production'
+  
+	ErrorLog      <%= @log_dir %>/public_site_error.log
+	CustomLog     <%= @log_dir %>/public_site_access.log combined
+
+	ErrorDocument 404 /404.html
+	ErrorDocument 500 /500.html
+
+	RewriteEngine On
+	
+	# Uncomment for rewrite debugging
+  #RewriteLog /var/sites/mysite/log/rewrite.log
+  #RewriteLogLevel 9
+
+  #apache should serve cached pages
+  RewriteRule ^/$ /cache/index.html [QSA]
+  RewriteRule ^([^.]+)$ /cache/$1.html [QSA]
+
+	<Directory <%= @docroot %>>
+    Order allow,deny
+    Allow from all
+  </Directory>
+</VirtualHost>
