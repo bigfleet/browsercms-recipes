@@ -1,14 +1,14 @@
 <VirtualHost *:80>
-	ServerName <%= @server_name %>
-  DocumentRoot <%= @docroot %>
+	ServerName <%= @params[:server_name] %>
+  DocumentRoot <%= @params[:docroot] %>
 	RailsAllowModRewrite on
   RailsBaseURI /
-  RailsMaxPoolSize <%= @max_pool_size %>
+  RailsMaxPoolSize <%= @params[:max_pool_size] %>
   RailsPoolIdleTime 3600
   RailsEnv 'production'
   
-	ErrorLog      <%= @log_dir %>/public_site_error.log
-	CustomLog     <%= @log_dir %>/public_site_access.log combined
+	ErrorLog      <%= @params[:log_dir] %>/public_site_error.log
+	CustomLog     <%= @params[:log_dir] %>/public_site_access.log combined
 
 	ErrorDocument 404 /404.html
 	ErrorDocument 500 /500.html
@@ -23,7 +23,7 @@
   RewriteRule ^/$ /cache/index.html [QSA]
   RewriteRule ^([^.]+)$ /cache/$1.html [QSA]
 
-	<Directory <%= @docroot %>>
+	<Directory <%= @params[:docroot] %>>
     Order allow,deny
     Allow from all
   </Directory>
