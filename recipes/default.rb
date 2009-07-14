@@ -17,8 +17,7 @@
 # limitations under the License.
 #
 
-include_recipe "apache2::mod_rails"
-include_recipe "passenger"
+include_recipe "passenger_apache2::mod_rails"
 
 user = node[:railsapps][:browsercms][:user]
 repo = node[:railsapps][:browsercms][:repo]
