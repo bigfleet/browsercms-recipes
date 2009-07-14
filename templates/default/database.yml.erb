@@ -1,13 +1,10 @@
 defaults: &defaults
   adapter: mysql
   host: localhost
-  username: root
-  password: <%= @passwd %>
+  username: <%= @params[:user] %>
+  password: <%= @params[:passwd] %>
 
 production:
-  database: browsercms
+  database: <%= @params[:database] %>
   <<: *defaults
 
-development:
-  database: browsercms
-  <<: *defaults

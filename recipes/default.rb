@@ -27,8 +27,7 @@ end
 
 ["#{node[:railsapps][:browsercms][:app][:log_dir]}",
  "#{node[:railsapps][:browsercms][:app][:path]}",
- "#{node[:railsapps][:browsercms][:app][:path]}/shared",
- "#{node[:railsapps][:browsercms][:app][:path]}/shared/config"].each do |dir_name|
+ "#{node[:railsapps][:browsercms][:app][:path]}/config"].each do |dir_name|
    directory dir_name do
      owner application_user
      group node[:railsapps][:browsercms][:app][:group]
@@ -36,12 +35,13 @@ end
    end
 end
 
-template "#{node[:railsapps][:browsercms][:app][:path]}/shared/config/database.yml" do
+template "#{node[:railsapps][:browsercms][:app][:path]}/config/database.yml" do
   source "database.yml.erb"
   owner    application_user
   group    node[:railsapps][:browsercms][:app][:group]
-  variables :name => node[:railsapps][:browsercms][:db][:database], 
-            :passwd => node[:railsapps][:browsercms][:db][:password]
+  variables :database => node[:railsapps][:browsercms][:db][:database], 
+            :passwd => node[:railsapps][:browsercms][:db][:password],
+            :user   => node[:railsapps][:browsercms][:db][:user]
   mode "0664"
 end
 
