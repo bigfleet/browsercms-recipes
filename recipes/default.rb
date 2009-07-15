@@ -60,7 +60,7 @@ end
 current_path = "#{node[:railsapps][:browsercms][:app][:path]}/#{node[:railsapps][:browsercms][:app][:sitename]}/public/"
 
 execute "setup-browsercms" do
-  command "rails #{node[:railsapps][:browsercms][:app][:sitename]} -d mysql -m http://browsercms.org/templates/#{node[:railsapps][:browsercms][:app][:style]}.rb"
+  command "rails #{node[:railsapps][:browsercms][:app][:sitename]} -s -d mysql -m http://browsercms.org/templates/#{node[:railsapps][:browsercms][:app][:style]}.rb"
   creates current_path
   group   "#{node[:railsapps][:browsercms][:app][:group]}"
   cwd     "#{node[:railsapps][:browsercms][:app][:path]}"
