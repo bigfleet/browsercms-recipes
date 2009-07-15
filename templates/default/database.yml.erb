@@ -5,6 +5,13 @@ defaults: &defaults
   password: <%= @passwd %>
 
 production:
-  database: <%= @database %>
+  database: <%= @database %>_production
   <<: *defaults
 
+staging:
+  database: <%= @database %>_staging
+  <<: *defaults
+
+development:
+  database: <%= @database %>_staging
+  <<: *defaults
