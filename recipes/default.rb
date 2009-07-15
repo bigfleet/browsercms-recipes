@@ -50,7 +50,7 @@ template "#{node[:railsapps][:browsercms][:app][:path]}/#{node[:railsapps][:brow
   source "database.yml.erb"
   owner    application_user
   group    node[:railsapps][:browsercms][:app][:group]
-  variables :database => node[:railsapps][:browsercms][:db][:database], 
+  variables :database_stem => node[:railsapps][:browsercms][:db][:database_stem], 
             :passwd => node[:railsapps][:browsercms][:db][:password],
             :user   => node[:railsapps][:browsercms][:db][:user],
             :host   => db_host || "localhost"
